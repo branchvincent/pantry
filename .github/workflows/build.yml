@@ -9,6 +9,9 @@ on:
       platform:
         required: true
         type: string
+    outputs:
+      unavailable:
+        value: ${{ steps.build.outputs.unavailable }}
 
 jobs:
   get-platform:
@@ -29,6 +32,8 @@ jobs:
     runs-on: ${{ fromJson(needs.get-platform.outputs.build-os) }}
     container: ${{ fromJson(needs.get-platform.outputs.container) }}
     needs: [get-platform]
+    outputs:
+      unavailable: ${{ env.unavailable }}
     steps:
       - uses: actions/checkout@v3
 
@@ -90,6 +95,7 @@ jobs:
 
   test:
     needs: [get-platform, build]
+    if: ${{ needs.build.outputs.unavailable != 'true' }}
     runs-on: ${{ matrix.platform.os }}
     strategy:
       matrix:

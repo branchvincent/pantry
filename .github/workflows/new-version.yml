@@ -35,6 +35,7 @@ jobs:
         - darwin+aarch64
         - linux+aarch64
     needs: [build]
+    if: ${{ needs.build.outputs.unavailable != 'true' }}
     uses: ./.github/workflows/bottle.yml
     with:
       new-version: true
